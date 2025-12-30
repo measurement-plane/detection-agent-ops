@@ -3,7 +3,7 @@
 # ========== CONFIGURABLE PARAMETERS ==========
 # Container and image configuration
 CONTAINER_NAME="detection_agent_container"
-IMAGE_NAME="amlabdr/detection_agent:latest"
+IMAGE_NAME="ghcr.io/measurement-plane/detection-agent:latest"
 
 # ---------------- Core connectivity ----------------
 BROKER_URL="nats://localhost:4222"
