@@ -1,15 +1,14 @@
-# TimeTags Measurement Agent Deployment
+# Detection and TimeTags Measurement Agent Deployment
 
-This document provides instructions for deploying the timetags_measurement_agent Docker container on a Linux system. The agent interacts with a White Rabbit device and a Time Tagger device for precision measurements.
+This document provides instructions for deploying the detection_agent Docker container on a Linux system. The agent interacts with a Time Tagger device for precision measurements.
 
 ## Prerequisites
 
 Before deploying the container, ensure the following:
 - Docker installed on your system.
 - Device Connections:
-    - White Rabbit: Connected via a serial-to-USB adapter (e.g., `/dev/ttyUSB0`).
     - Time Tagger: Connected via USB with its serial number known (e.g., `2138000XXX`).
-- A running message broker (e.g., activemq) accessible at the specified `BROKER_URL`.
+- A running message broker (e.g., NATS) accessible at the specified `BROKER_URL`.
 
 ## Deployment Steps
 
@@ -17,20 +16,26 @@ Before deploying the container, ensure the following:
 Clone or download the repository containing the run.sh script.
 ```bash
 git clone <repo-url>
-cd timetags_measurement_agent
+cd detection-agent-ops
 ```
 
 ### 2. Configure Environment Variables
 Update the run.sh script to match your setup:
 
 ```bash
-BROKER_URL: ActiveMQ broker URL (e.g., amqp://localhost:5672/).
-ENDPOINT: The agent's endpoint identifier (e.g., Alice).
-WR_TYPE: White Rabbit device type (e.g., LEN).
-WR_PORT: Serial port for the White Rabbit device (e.g., /dev/ttyUSB0).
-TIME_TAGGER_SERIAL: Serial number of the Time Tagger device.
-PPS_CHAN: Pulse-per-second channel.
-TRIGGER_LEVEL: Trigger level for the Time Tagger (default: 0.1).
+BROKER_URL: Broker URL (e.g., nats://localhost:4222).
+ENDPOINT: The agent's endpoint identifier (e.g., /timetagger/alice).
+TT_TYPE: Time Tagger backend type.
+TT_SERIAL: Serial number of the connected Time Tagger device.
+PPS_CHANNEL: Channel index receiving the 1-PPS synchronization pulse.
+TT_CHANNELS: List of enabled detector channels separated by "|" (e.g., 1|2|3|4|5|6|7|8).
+MAX_EVENTS: Maximum number of time tags to buffer per acquisition.
+BUFFER_SECONDS: Duration of the internal acquisition buffer in seconds.
+
+TT_TRIGGER_LEVELS: Per-channel trigger thresholds in the format "ch=value" separated by commas.
+TT_EVENT_DIVIDERS: Per-channel event thinning ratios (e.g., x=10 means keep 1 out of 10 events for channel number x).
+TT_DEAD_TIMES: Optional per-channel dead times in picoseconds.
+TT_DELAYS: Optional per-channel timing delays in picoseconds.
 ```
 
 ### 3. Run the Deployment Script
